@@ -240,8 +240,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50d92d2aa6882634eb95a5ac6596db9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightColor: {r: 0.7075472, g: 0.5306604, b: 0.5306604, a: 0.5019608}
-  darkColor: {r: 0.4811321, g: 0.28368637, b: 0.28368637, a: 0.5019608}
+  fenString: 
+  lightColor: {r: 0.879, g: 0.65925, b: 0.65925, a: 0.5019608}
+  darkColor: {r: 0.78699994, g: 0.46068293, b: 0.46068293, a: 0.5019608}
+  pieceSprites:
+  - {fileID: 6623963105415861948, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 4271928469194566216, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 5209222130277788377, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 205499288650012117, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 7970158032838120485, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 24965338684803766, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 4842974383721489020, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 8239140532275945989, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 2606153016120934048, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: -2925221628021560560, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: -2647962682813126139, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  - {fileID: 8736564960913313170, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
+  pieceScale: {x: 0.5, y: 0.5, z: 0.5}
 --- !u!4 &1283832464
 Transform:
   m_ObjectHideFlags: 0
