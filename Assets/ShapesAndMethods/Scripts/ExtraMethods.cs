@@ -139,6 +139,16 @@ public static class ExtraMethods
     {
         return new Vector2(UnityEngine.Random.Range(-x, x), UnityEngine.Random.Range(-y, y));
     }
+
+    public static int GetLastIndex<T>(this T[] arr)
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            if (arr[i] == null)
+                return i - 1;
+        }
+        return -1;
+    }
 }
 
 public static class Create

@@ -8,16 +8,17 @@ public class StartBoard : MonoBehaviour
 {
     public string fenString;
 
-    [SerializeField] Color lightColor, darkColor;
+    [SerializeField] Color lightColor, darkColor, pieceWhiteColor = Color.white, pieceBlackColor = Color.black;
     [SerializeField] Sprite[] pieceSprites;
     [SerializeField] Vector3 pieceScale;
 
     Board ChessBoard;
-    GameObject PiecesParent;
+    GameObject PiecesParent, SquaresParent;
 
     private void Start()
     {
         PiecesParent = new("Pieces Parent");
+        SquaresParent = new("Squares Parent");
         NewBoard();
     }
 
@@ -25,11 +26,18 @@ public class StartBoard : MonoBehaviour
     {
         foreach (Square square in ChessBoard.Squares)
         {
-            if (square.color != lightColor || square.color != darkColor)
+            if (square.color != lightColor && square.color != darkColor)
                 square.SetColor(square.isLight ? lightColor : darkColor);
             if (square.piece)
                 square.piece.transform.localScale = pieceScale;
         }
+
+        foreach (Piece piece in ChessBoard.whitePieces)
+            if (piece.color != pieceWhiteColor)
+                piece.SetColor(pieceWhiteColor);
+        foreach (Piece piece in ChessBoard.blackPieces)
+            if (piece.color != pieceBlackColor)
+                piece.SetColor(pieceBlackColor);
     }
 
     void NewBoard()
@@ -41,12 +49,12 @@ public class StartBoard : MonoBehaviour
 
     void SpawnSquares()
     {
-        if (ChessBoard.Squares == null)
-            ChessBoard.Squares = new Square[64];
+        ChessBoard.Squares ??= new Square[64];
         for (int i = 0; i < 64; i++)
         {
-            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             obj.name = "Square " + (i + 1);
+            obj.transform.SetParent(SquaresParent.transform);
 
             obj.transform.position = new(i % 8, (int)(i / 8));
             Vector2 pos = obj.transform.position;
@@ -102,7 +110,7 @@ public class StartBoard : MonoBehaviour
                 piece.file = square.file;
                 piece.isWhite = square.rank == 1 || square.rank == 2;
 
-                piece.name = piece.isWhite ? "White" : "Black" + " " + piece.type.ToString();
+                piece.name = (piece.isWhite ? "White" : "Black") + " " + piece.type.ToString();
 
                 piece = SetPieceSprite(piece);
                 if (piece.isWhite)
@@ -121,16 +129,41 @@ public class StartBoard : MonoBehaviour
     {
         piece.sprite = piece.type switch
         {
-            PieceType.Pawn => piece.isWhite ? pieceSprites[5] : pieceSprites[11],
-            PieceType.Rook => piece.isWhite ? pieceSprites[4] : pieceSprites[10],
-            PieceType.Knight => piece.isWhite ? pieceSprites[3] : pieceSprites[9],
-            PieceType.Bishop => piece.isWhite ? pieceSprites[2] : pieceSprites[8],
-            PieceType.King => piece.isWhite ? pieceSprites[0] : pieceSprites[6],
-            PieceType.Queen => piece.isWhite ? pieceSprites[1] : pieceSprites[7],
+            PieceType.Pawn => pieceSprites[5],
+            PieceType.Rook => pieceSprites[4],
+            PieceType.Knight => pieceSprites[3],
+            PieceType.Bishop => pieceSprites[2],
+            PieceType.King => pieceSprites[0],
+            PieceType.Queen => pieceSprites[1],
             _ => null
         };
 
         return piece;
+    }
+
+    public static Piece[] ConvertTo(Piece _)
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Piece");
+        Piece[] arr = new Piece[objects.Length];
+        int i = 0;
+        foreach (GameObject obj in objects)
+        {
+            if (obj.TryGetComponent<Piece>(out Piece Tcomp))
+                arr[i] = Tcomp;
+        }
+        return arr;
+    }
+    public static Square[] ConvertTo(Square _)
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Square");
+        Square[] arr = new Square[objects.Length];
+        int i = 0;
+        foreach (GameObject obj in objects)
+        {
+            if (obj.TryGetComponent<Square>(out Square Tcomp))
+                arr[i] = Tcomp;
+        }
+        return arr;
     }
 }
 
@@ -140,6 +173,7 @@ public struct Board
     public Square[] Squares;
     public List<Piece> whitePieces;
     public List<Piece> blackPieces;
+    public bool isWhitesTurn;
 
     public Board(Color lColor, Color dColor)
     {
@@ -148,5 +182,6 @@ public struct Board
         Squares = new Square[64];
         whitePieces = new List<Piece>();
         blackPieces = new List<Piece>();
+        isWhitesTurn = true;
     }
 }

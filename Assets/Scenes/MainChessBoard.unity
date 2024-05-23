@@ -243,6 +243,8 @@ MonoBehaviour:
   fenString: 
   lightColor: {r: 0.879, g: 0.65925, b: 0.65925, a: 0.5019608}
   darkColor: {r: 0.78699994, g: 0.46068293, b: 0.46068293, a: 0.5019608}
+  pieceWhiteColor: {r: 1, g: 1, b: 1, a: 1}
+  pieceBlackColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   pieceSprites:
   - {fileID: 6623963105415861948, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
   - {fileID: 4271928469194566216, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
@@ -257,6 +259,7 @@ MonoBehaviour:
   - {fileID: -2647962682813126139, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
   - {fileID: 8736564960913313170, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
   pieceScale: {x: 0.5, y: 0.5, z: 0.5}
+  mouseSO: {fileID: 11400000, guid: f447775902ec2b748b21fd626ce9f3a1, type: 2}
 --- !u!4 &1283832464
 Transform:
   m_ObjectHideFlags: 0
