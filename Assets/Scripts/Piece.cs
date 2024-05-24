@@ -1,19 +1,22 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Piece : MonoBehaviour
 {
+    public static event Action<Piece> OnEnPassant;
+
     public Sprite sprite;
     public Color color;
     public PieceType type;
     public int file, rank;
-    public bool isWhite, selected;
+    public bool isWhite, selected, isTurn, EnPassant;
 
     SpriteRenderer rend;
 
     private void Start()
     {
-        MovePiece(rank, file);
+        OnMovePiece(rank, file);
 
         rend = gameObject.AddComponent<SpriteRenderer>();
         rend.sprite = sprite;
@@ -27,33 +30,61 @@ public class Piece : MonoBehaviour
         rend.color = color;
     }
 
-    public void MovePiece(int newRank, int newFile)
+    public Piece OnMovePiece(int newRank, int newFile)
     {
         rank = newRank;
         file = newFile;
 
         transform.position = new(file - 1, rank - 1, -1);
+        SetAllDefault();
+        if (ExtraMethods.AbsDist(rank, newRank) == 2 && type == PieceType.Pawn)
+            EnPassant = true;
+
+        if (EnPassant)
+            OnEnPassant(this);
+
+        return this;
     }
 
     private void OnMouseOver()
     {
-        rend.color = Color.red;
+        if (!isTurn)
+            return;
+        rend.color = isWhite ? Color.red : new(0.75f, 0, 0, 1);
     }
     private void OnMouseExit()
     {
         if (!selected)
             rend.color = color;
-
     }
 
     private void OnMouseDown()
     {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag("Square");
-        Square[] squares = new Square[objects.Length];
-        int i = 0;
-        foreach (GameObject obj in objects)
-            squares[i] = obj.GetComponent<Square>();
+        SetAllDefault();
 
+        if (!isTurn)
+            return;
+        selected = !selected;
+
+        if (!selected)
+            return;
+        Square.MovePiece += OnMovePiece;
+
+        Square[] legalSquares = CheckMoves.GetLegalMoves(this);
+
+        foreach (Square square in legalSquares)
+            if (square != null)
+                square.SelectSquare(true);
+    }
+
+    private void OnDestroy()
+    {
+        SetAllDefault();
+        Square.MovePiece -= OnMovePiece;
+    }
+    public static void SetAllDefault()
+    {
+        Square[] squares = Square.GetAllSquares();
         foreach (Square square in squares)
             if (square != null)
             {
@@ -61,24 +92,27 @@ public class Piece : MonoBehaviour
                 square.isLegal = false;
             }
 
-        selected = !selected;
-        objects = GameObject.FindGameObjectsWithTag("Piece");
-        Piece[] pieces = new Piece[objects.Length];
+        Piece[] pieces = Piece.GetAllPieces();
         foreach (Piece piece in pieces)
-            if (piece != null && piece != this)
+            if (piece != null)
             {
                 piece.selected = false;
+                Square.MovePiece -= piece.OnMovePiece;
                 piece.SetColor(piece.color);
             }
+    }
 
-        if (!selected)
-            return;
+    public static Piece[] GetAllPieces()
+    {
+        GameObject[] objects = GameObject.FindGameObjectsWithTag("Piece");
+        Piece[] pieces = new Piece[objects.Length];
 
-        Square[] legalSquares = CheckMoves.GetLegalMoves(this);
+        for (int i = 0; i < objects.Length; i++)
+        {
+            pieces[i] = objects[i].GetComponent<Piece>();
+        }
 
-        foreach (Square square in legalSquares)
-            if (square != null)
-                square.SelectSquare(true);
+        return pieces;
     }
 }
 

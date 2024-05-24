@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class StartBoard : MonoBehaviour
 {
+    public static event Action<Board> OnStartBoard;
     public string fenString;
 
     [SerializeField] Color lightColor, darkColor, pieceWhiteColor = Color.white, pieceBlackColor = Color.black;
@@ -20,6 +21,7 @@ public class StartBoard : MonoBehaviour
         PiecesParent = new("Pieces Parent");
         SquaresParent = new("Squares Parent");
         NewBoard();
+        OnStartBoard(ChessBoard);
     }
 
     private void Update()
@@ -104,11 +106,16 @@ public class StartBoard : MonoBehaviour
                 else if ((square.file == 5) && (square.rank == 1 || square.rank == 8))
                     piece.type = PieceType.Queen;
                 else
-                    piece.type = PieceType.Empty;
+                {
+                    Destroy(obj);
+                    square.piece = null;
+                    continue;
+                }
 
                 piece.rank = square.rank;
                 piece.file = square.file;
                 piece.isWhite = square.rank == 1 || square.rank == 2;
+                piece.isTurn = piece.isWhite;
 
                 piece.name = (piece.isWhite ? "White" : "Black") + " " + piece.type.ToString();
 

@@ -155,7 +155,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3301887, g: 0.3068263, b: 0.3068263, a: 0}
+  m_BackGroundColor: {r: 0.05, g: 0.05, b: 0.05, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -221,8 +221,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1283832464}
   - component: {fileID: 1283832463}
+  - component: {fileID: 1283832465}
   m_Layer: 0
-  m_Name: StartBoard
+  m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -259,7 +260,6 @@ MonoBehaviour:
   - {fileID: -2647962682813126139, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
   - {fileID: 8736564960913313170, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
   pieceScale: {x: 0.5, y: 0.5, z: 0.5}
-  mouseSO: {fileID: 11400000, guid: f447775902ec2b748b21fd626ce9f3a1, type: 2}
 --- !u!4 &1283832464
 Transform:
   m_ObjectHideFlags: 0
@@ -275,6 +275,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1283832465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283832462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c466088c6a6a1e458145298e63029b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWhitesTurn: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

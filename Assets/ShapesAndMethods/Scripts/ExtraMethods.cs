@@ -145,7 +145,7 @@ public static class ExtraMethods
         for (int i = 0; i < arr.Length; i++)
         {
             if (arr[i] == null)
-                return i - 1;
+                return i;
         }
         return -1;
     }
