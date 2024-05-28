@@ -242,10 +242,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fenString: 
-  lightColor: {r: 0.879, g: 0.65925, b: 0.65925, a: 0.5019608}
-  darkColor: {r: 0.78699994, g: 0.46068293, b: 0.46068293, a: 0.5019608}
+  lightColor: {r: 0.6360821, g: 0.41006586, b: 0.9150943, a: 1}
+  darkColor: {r: 0.2077443, g: 0.063412234, b: 0.5377358, a: 1}
   pieceWhiteColor: {r: 1, g: 1, b: 1, a: 1}
-  pieceBlackColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
+  pieceBlackColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   pieceSprites:
   - {fileID: 6623963105415861948, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
   - {fileID: 4271928469194566216, guid: 9910066545026ac4dae4dabf736612ef, type: 3}
@@ -287,7 +287,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c466088c6a6a1e458145298e63029b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCam: {fileID: 519420031}
   isWhitesTurn: 0
+  TwoPersonPlay: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -39,7 +39,7 @@ public class Square : MonoBehaviour
             return;
 
         if (piece != null)
-            Destroy(piece.gameObject);
+            piece.Capture();
         piece = MovePiece(rank, file);
         EndTurn(piece.isWhite);
     }
@@ -61,8 +61,22 @@ public class Square : MonoBehaviour
         foreach (Collider collider in hitObjects)
         {
             if (collider.TryGetComponent<Square>(out Square square))
-                return square;
+                if (square.rank == rank && square.file == file)
+                    return square;
         }
         return null;
+    }
+
+    public void CheckPiece()
+    {
+        foreach (Piece checkedPiece in Piece.GetAllPieces())
+        {
+            if (checkedPiece.rank == rank && checkedPiece.file == file)
+            {
+                piece = checkedPiece;
+                break;
+            }
+            piece = null;
+        }
     }
 }

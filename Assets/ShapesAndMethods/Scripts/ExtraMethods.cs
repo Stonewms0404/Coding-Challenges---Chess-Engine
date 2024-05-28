@@ -149,6 +149,13 @@ public static class ExtraMethods
         }
         return -1;
     }
+
+    public static Vector2 Flip(this Vector2 v, bool flipX, bool flipY)
+    {
+        if (flipX) v.x = -v.x;
+        if (flipY) v.y = -v.y;
+        return v;
+    }
 }
 
 public static class Create

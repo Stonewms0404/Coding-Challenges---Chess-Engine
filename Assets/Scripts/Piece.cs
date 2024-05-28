@@ -16,7 +16,7 @@ public class Piece : MonoBehaviour
 
     private void Start()
     {
-        OnMovePiece(rank, file);
+        transform.position = new(file - 1, rank - 1, -1);
 
         rend = gameObject.AddComponent<SpriteRenderer>();
         rend.sprite = sprite;
@@ -36,6 +36,7 @@ public class Piece : MonoBehaviour
         file = newFile;
 
         transform.position = new(file - 1, rank - 1, -1);
+
         SetAllDefault();
         if (ExtraMethods.AbsDist(rank, newRank) == 2 && type == PieceType.Pawn)
             EnPassant = true;
@@ -43,7 +44,16 @@ public class Piece : MonoBehaviour
         if (EnPassant)
             OnEnPassant(this);
 
+        foreach(Square square in Square.GetAllSquares())
+            square.CheckPiece();
+
         return this;
+    }
+
+    public void Capture()
+    {
+        Destroy(rend);
+        Destroy(gameObject);
     }
 
     private void OnMouseOver()
@@ -108,9 +118,7 @@ public class Piece : MonoBehaviour
         Piece[] pieces = new Piece[objects.Length];
 
         for (int i = 0; i < objects.Length; i++)
-        {
             pieces[i] = objects[i].GetComponent<Piece>();
-        }
 
         return pieces;
     }

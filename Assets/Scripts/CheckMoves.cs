@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -22,17 +23,25 @@ public static class CheckMoves
                 candidate = Square.GetSquareAtPos(
                     piece.isWhite ? piece.rank + 1 : piece.rank - 1,
                     piece.isWhite ? piece.file + 1 : piece.file - 1);
-                if ((ValidateSquare(candidate, piece.isWhite) || IsEnPassant(piece.rank, piece.isWhite ? piece.file + 1 : piece.file - 1, piece.isWhite)) && (candidate.piece == null))
-                    if (candidate.piece != null)
+                if (ValidateSquare(candidate, piece.isWhite))
+                {
+                    if (IsEnPassant(piece.rank, piece.isWhite ? piece.file + 1 : piece.file - 1, piece.isWhite) && candidate.piece == null)
                         legal[0] = candidate;
+                    else if (candidate.piece != null)
+                        legal[0] = candidate;
+                }
 
                 //Square one up and one left
                 candidate = Square.GetSquareAtPos(
                     piece.isWhite ? piece.rank + 1 : piece.rank - 1,
                     piece.isWhite ? piece.file - 1 : piece.file + 1);
-                if ((ValidateSquare(candidate, piece.isWhite) || IsEnPassant(piece.rank, piece.isWhite ? piece.file - 1 : piece.file + 1, piece.isWhite)) && (candidate.piece == null))
-                    if (candidate.piece != null)
+                if (ValidateSquare(candidate, piece.isWhite) && candidate.piece)
+                {
+                    if (IsEnPassant(piece.rank, piece.isWhite ? piece.file - 1 : piece.file + 1, piece.isWhite) && candidate.piece == null)
                         legal[1] = candidate;
+                    else if (candidate.piece != null)
+                        legal[1] = candidate;
+                }
 
                 //Square in front of the pawn
                 candidate = Square.GetSquareAtPos(piece.isWhite ? piece.rank + 1 : piece.rank - 1, piece.file);
@@ -61,18 +70,24 @@ public static class CheckMoves
                     if (ValidateSquare(candidate, piece.isWhite))
                     {
                         legal[legal.GetLastIndex()] = candidate;
-                    }
-                    else
+                        if (candidate.piece == null)
+                            continue;
                         break;
+                    }
+                    break;
                 }
                 //Search Rank left side
                 for (int i = piece.file - 1; i > 0; i--)
                 {
                     candidate = Square.GetSquareAtPos(piece.rank, i);
                     if (ValidateSquare(candidate, piece.isWhite))
+                    {
                         legal[legal.GetLastIndex()] = candidate;
-                    else
+                        if (candidate.piece == null)
+                            continue;
                         break;
+                    }
+                    break;
                 }
 
                 //Search File Up
@@ -82,21 +97,35 @@ public static class CheckMoves
                     if (ValidateSquare(candidate, piece.isWhite))
                     {
                         legal[legal.GetLastIndex()] = candidate;
-                    }
-                    else
+                        if (candidate.piece == null)
+                            continue;
                         break;
+                    }
+                    break;
                 }
                 //Search File Down
                 for (int i = piece.rank - 1; i > 0; i--)
                 {
                     candidate = Square.GetSquareAtPos(i, piece.file);
                     if (ValidateSquare(candidate, piece.isWhite))
+                    {
                         legal[legal.GetLastIndex()] = candidate;
-                    else
+                        if (candidate.piece == null)
+                            continue;
                         break;
+                    }
+                    break;
                 }
                 break;
             case PieceType.Knight:
+                Vector2 horL = new(piece.file + 1, piece.rank + 2);
+                Vector2 verL = new(piece.file + 2, piece.rank + 1);
+
+                candidate = Square.GetSquareAtPos((int)horL.x, (int)horL.y);
+                //if (ValidateSquare(candidate, piece.isWhite) || candidate.piece == null)
+                    
+
+
                 break;
             case PieceType.Bishop:
                 break;
@@ -137,7 +166,6 @@ public static class CheckMoves
                 if (square.piece == null)
                     continue;
 
-                ValidateSquare(square, isWhite);
                 return square.piece.EnPassant;
             }
         }
