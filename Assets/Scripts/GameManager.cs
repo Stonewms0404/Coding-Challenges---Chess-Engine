@@ -26,22 +26,15 @@ public class GameManager : MonoBehaviour
     {
         isWhitesTurn = !isWhite;
         foreach (Piece piece in Piece.GetAllPieces())
-        {
-            piece.isTurn = isWhitesTurn;
-        }
+            if (piece)
+                piece.isTurn = piece.isWhite ? isWhitesTurn : !isWhitesTurn;
 
         //Flip perspective
         if (TwoPersonPlay)
         {
             mainCam.transform.rotation = Quaternion.Euler(0, 0, isWhitesTurn ? 0 : 180);
-            foreach (Piece piece in currBoard.whitePieces)
-            {
-                piece.transform.rotation = Quaternion.Euler(0, 0, isWhitesTurn ? 0 : 180);
-            }
-            foreach (Piece piece in currBoard.blackPieces)
-        {
-            piece.transform.rotation = Quaternion.Euler(0, 0, isWhitesTurn ? 0 : 180);
-        }
+            foreach (Piece piece in Piece.GetAllPieces())
+                piece.transform.rotation = Quaternion.Euler(0, 0, (isWhitesTurn) ? 0 : 180);
         }
     }
 

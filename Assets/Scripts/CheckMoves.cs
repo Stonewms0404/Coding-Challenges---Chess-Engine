@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.VFX;
 
 public static class CheckMoves
@@ -63,81 +66,196 @@ public static class CheckMoves
             case PieceType.Rook:
                 legal = new Square[14];
 
-                //Search Rank right side
-                for (int i = piece.file + 1; i <= 8; i++)
-                {
-                    candidate = Square.GetSquareAtPos(piece.rank, i);
-                    if (ValidateSquare(candidate, piece.isWhite))
-                    {
-                        legal[legal.GetLastIndex()] = candidate;
-                        if (candidate.piece == null)
-                            continue;
-                        break;
-                    }
-                    break;
-                }
-                //Search Rank left side
-                for (int i = piece.file - 1; i > 0; i--)
-                {
-                    candidate = Square.GetSquareAtPos(piece.rank, i);
-                    if (ValidateSquare(candidate, piece.isWhite))
-                    {
-                        legal[legal.GetLastIndex()] = candidate;
-                        if (candidate.piece == null)
-                            continue;
-                        break;
-                    }
-                    break;
-                }
-
-                //Search File Up
-                for (int i = piece.rank + 1; i <= 8; i++)
-                {
-                    candidate = Square.GetSquareAtPos(i, piece.file);
-                    if (ValidateSquare(candidate, piece.isWhite))
-                    {
-                        legal[legal.GetLastIndex()] = candidate;
-                        if (candidate.piece == null)
-                            continue;
-                        break;
-                    }
-                    break;
-                }
-                //Search File Down
-                for (int i = piece.rank - 1; i > 0; i--)
-                {
-                    candidate = Square.GetSquareAtPos(i, piece.file);
-                    if (ValidateSquare(candidate, piece.isWhite))
-                    {
-                        legal[legal.GetLastIndex()] = candidate;
-                        if (candidate.piece == null)
-                            continue;
-                        break;
-                    }
-                    break;
-                }
+                HorizonalSquares(piece, ref legal);
                 break;
             case PieceType.Knight:
-                Vector2 horL = new(piece.file + 1, piece.rank + 2);
-                Vector2 verL = new(piece.file + 2, piece.rank + 1);
+                legal = new Square[8];
 
-                candidate = Square.GetSquareAtPos((int)horL.x, (int)horL.y);
-                //if (ValidateSquare(candidate, piece.isWhite) || candidate.piece == null)
-                    
+                //Search the flattened L by rotating it using the coordinate system
+                for (int i = 0; i < 4; i++)
+                {
+                    candidate = Square.GetSquareAtPos(
+                        piece.rank + (i % 4 == 1 || i % 4 == 2 ? -2 : 2),
+                        piece.file + (i % 4 == 2 || i % 4 == 3 ? -1 : 1));
+                    if (ValidateSquare(candidate, piece.isWhite))
+                    {
+                        if (candidate.piece == null)
+                            legal[legal.GetLastIndex()] = candidate;
+                    }
+                }
 
-
+                //Search the heightened L by rotating it using the coordinate system
+                for (int i = 0; i < 4; i++)
+                {
+                    candidate = Square.GetSquareAtPos(
+                        piece.rank + (i % 4 == 1 || i % 4 == 2 ? -1 : 1),
+                        piece.file + (i % 4 == 2 || i % 4 == 3 ? -2 : 2));
+                    if (ValidateSquare(candidate, piece.isWhite))
+                    {
+                        if (candidate.piece == null)
+                            legal[legal.GetLastIndex()] = candidate;
+                    }
+                }
                 break;
             case PieceType.Bishop:
+                legal = new Square[13];
+
+                DiagonalSquares(piece, ref legal);
                 break;
             case PieceType.Queen:
+                legal = new Square[27];
+
+                HorizonalSquares(piece, ref legal);
+                DiagonalSquares(piece, ref legal);
                 break;
             case PieceType.King:
+                legal = new Square[8];
+                Square[] kingCandidates = new Square[8];
+
+                //Getting all candidate squares that the king can move to
+                kingCandidates[0] = Square.GetSquareAtPos(piece.rank + 1, piece.file - 1);
+                kingCandidates[1] = Square.GetSquareAtPos(piece.rank + 1, piece.file);
+                kingCandidates[2] = Square.GetSquareAtPos(piece.rank + 1, piece.file + 1);
+                kingCandidates[3] = Square.GetSquareAtPos(piece.rank, piece.file - 1);
+                kingCandidates[4] = Square.GetSquareAtPos(piece.rank, piece.file + 1);
+                kingCandidates[5] = Square.GetSquareAtPos(piece.rank - 1, piece.file - 1);
+                kingCandidates[6] = Square.GetSquareAtPos(piece.rank - 1, piece.file);
+                kingCandidates[7] = Square.GetSquareAtPos(piece.rank - 1, piece.file + 1);
+
+                //Checking all candidate squares for the king to move to
+                foreach (var kingCandidate in kingCandidates)
+                    if (ValidateSquare(kingCandidate, piece.isWhite) && (kingCandidate.piece == null))
+                        legal[legal.GetLastIndex()] = kingCandidate;
                 break;
             default:
                 return null;
         }
 
         return legal;
+    }
+
+    static void DiagonalSquares(Piece piece, ref Square[] legal)
+    {
+        Square candidate;
+
+        //Up to the Right Diagonal
+        int i = 0, j = 0;
+        while (true)
+        {
+            candidate = Square.GetSquareAtPos(piece.rank + ++i, piece.file + ++j);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece != null)
+                    break;
+                continue;
+            }
+            break;
+        }
+
+        //Up to the Left Diagonal
+        i = 0; j = 0;
+        while (true)
+        {
+            candidate = Square.GetSquareAtPos(piece.rank + --i, piece.file + ++j);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece != null)
+                    break;
+                continue;
+            }
+            break;
+        }
+
+        //Down to the Right Diagonal
+        i = 0; j = 0;
+        while (true)
+        {
+            candidate = Square.GetSquareAtPos(piece.rank + ++i, piece.file + --j);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece != null)
+                    break;
+                continue;
+            }
+            break;
+        }
+
+        //Down to the Left Diagonal
+        i = 0; j = 0;
+        while (true)
+        {
+            candidate = Square.GetSquareAtPos(piece.rank + --i, piece.file + --j);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece != null)
+                    break;
+                continue;
+            }
+            break;
+        }
+    }
+
+    static void HorizonalSquares(Piece piece, ref Square[] legal)
+    {
+        Square candidate;
+        
+        //Search Rank right side
+        for (int i = piece.file + 1; i <= 8; i++)
+        {
+            candidate = Square.GetSquareAtPos(piece.rank, i);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece == null)
+                    continue;
+                break;
+            }
+            break;
+        }
+        //Search Rank left side
+        for (int i = piece.file - 1; i > 0; i--)
+        {
+            candidate = Square.GetSquareAtPos(piece.rank, i);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece == null)
+                    continue;
+                break;
+            }
+            break;
+        }
+
+        //Search File Up
+        for (int i = piece.rank + 1; i <= 8; i++)
+        {
+            candidate = Square.GetSquareAtPos(i, piece.file);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece == null)
+                    continue;
+                break;
+            }
+            break;
+        }
+        //Search File Down
+        for (int i = piece.rank - 1; i > 0; i--)
+        {
+            candidate = Square.GetSquareAtPos(i, piece.file);
+            if (ValidateSquare(candidate, piece.isWhite))
+            {
+                legal[legal.GetLastIndex()] = candidate;
+                if (candidate.piece == null)
+                    continue;
+                break;
+            }
+            break;
+        }
     }
 
     static bool ValidateSquare(Square square, bool isWhite)
